@@ -32,7 +32,7 @@ if len( sys.argv ) < 2:
 	print( '               Will interrupt any logging happening.', file=sys.stderr )
 	print( '    wait     : Waits for the instance to stop gracefully.', file=sys.stderr )
 	print( '               Useful in init script restarts where the process on STDIN is exiting as it allows logging to complete.', file=sys.stderr )
-	print( '    waitkill : Performs the wait action for 30 seconds. If the proces is still running it is then killed.', file=sys.stderr )
+	print( '    waitkill : Performs the wait action for 30 seconds and then, if the instance is still running, kills it.', file=sys.stderr )
 	sys.exit(2)
 
 # We never use STDOUT so close it

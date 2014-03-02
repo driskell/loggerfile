@@ -19,7 +19,7 @@ _ME=$( basename $0 )
 	echo "               Will interrupt any logging happening."
 	echo "    wait     : Waits for the instance to stop gracefully."
 	echo "               Useful in init script restarts where the process on STDIN is exiting as it allows logging to complete."
-	echo "    waitkill : Performs the wait action for 30 seconds. If the proces is still running it is then killed."
+	echo "    waitkill : Performs the wait action for 30 seconds and then, if the instance is still running, kills it."
 	exit 2
 } >&2
 

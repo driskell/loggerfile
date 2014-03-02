@@ -27,4 +27,4 @@ Waits for the instance to stop gracefully. Useful in init script restarts where 
 
 #### waitkill
 
-Performs the wait action for 30 seconds. If the proces is still running it is then killed.
+Performs the wait action for 30 seconds and then, if the instance is still running, kills it.
