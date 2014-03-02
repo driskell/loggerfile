@@ -13,7 +13,7 @@ class AlarmSignal( Exception ):
 	def __str__( self ):
 		return repr( self.value )
 
-version = "0.9"
+version = "0.1"
 me = os.path.basename( __file__ )
 
 # Check we have specified enough parameters

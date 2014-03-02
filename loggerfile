@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-_VERSION="0.9"
+_VERSION="0.1"
 _ME=$( basename $0 )
 
 # Check we have specified enough parameters
