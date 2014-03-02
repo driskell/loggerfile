@@ -1,0 +1,144 @@
+#!/usr/bin/env bash
+
+_VERSION="0.9"
+_ME=$( basename $0 )
+
+# Check we have specified enough parameters
+[ -z "$1" ] && {
+	echo "Loggerfile v${_VERSION} by Driskell <devel@jasonwoods.me.uk>"
+	echo
+	echo "Usage: ${_ME} <filename> [<signal>]"
+	echo
+	echo "If signal is unspecified, ${_ME} will start a new instance and log STDIN to the specified file."
+	echo "If a signal is specified, ${_ME} will locate the process currently logging to the specified file"
+	echo "and request it to perform the specified action."
+	echo
+	echo "Available signal actions:"
+	echo "    reopen   : Closes the log file and reopens it. Useful in log rotation scripts."
+	echo "    stop     : Requests the instance to stop immediately."
+	echo "               Will interrupt any logging happening."
+	echo "    wait     : Waits for the instance to stop gracefully."
+	echo "               Useful in init script restarts where the process on STDIN is exiting as it allows logging to complete."
+	echo "    waitkill : Performs the wait action for 30 seconds. If the proces is still running it is then killed."
+	exit 2
+} >&2
+
+# We never use STDOUT so close it
+exec 1>&-
+
+# Store log file
+_OUT=$1
+
+fetch_pid() {
+	[ ! -f "${_OUT}.pid" ] && {
+		echo "Could not find the .pid file for ${_OUT}. Are you sure there is a ${_ME} running to that log file?"
+		exit 2
+	} >&2
+	_PID=$( cat "${_OUT}.pid" )
+	kill -0 $_PID &>/dev/null
+	RC=$?
+	[ $RC -ne 0 ] && {
+		echo "The .pid for ${_OUT} exists, but there is no ${_ME} running to it."
+		exit $RC
+	} >&2
+}
+
+waitkill() {
+	_CHECKS=0
+	while [ 42 ]; do
+		kill -0 $_PID &>/dev/null
+		RC=$?
+		[ $RC -ne 0 ] && exit 0
+		(( _CHECKS++ ))
+		if [ $_CHECKS -ge 30 ]; then
+			kill -9 $_PID &>/dev/null
+			sleep 1
+			break
+		fi
+		sleep 1
+	done
+}
+
+# Are we asking for a reopen?
+[ -n "$2" ] && {
+	case $2 in
+		reopen)
+			fetch_pid
+			kill -USR1 $_PID &>/dev/null
+			RC=$?
+			[ $RC -ne 0 ] && {
+				echo "Failed to signal process with PID '${_PID}'. Maybe it terminated as we tried to communicate with it?"
+				exit $RC
+			} >&2
+			exit 0
+			;;
+		stop)
+			fetch_pid
+			kill -QUIT $_PID &>/dev/null
+			RC=$?
+			[ $RC -ne 0 ] && {
+				echo "Failed to signal process with PID '${_PID}'. Maybe it terminated as we tried to communicate with it?"
+				exit $RC
+			} >&2
+			waitkill
+			exit 0
+			;;
+		wait)
+			fetch_pid
+			while [ 42 ]; do
+				kill -0 $_PID &>/dev/null
+				RC=$?
+				[ $RC -ne 0 ] && break
+				sleep 1
+			done
+			exit 0
+			;;
+		waitkill)
+			fetch_pid
+			waitkill
+			exit 0
+			;;
+	esac
+}
+
+# We need to lock the PID file to prevent double running to the same file
+exec 3<>"${_OUT}.pid"
+flock -en 3
+RC=$?
+[ $RC -ne 0 ] && {
+	echo "Failed to lock the .pid file for ${_OUT}. Is there another ${_ME} already running to that log file?"
+	exit $RC
+} >&2
+
+# Drop the PID into a file so we can SIGUSR1 the loggerfile
+echo $BASHPID >&3
+
+# On SIGUSR1 reopen the log file
+open_log() {
+	exec 1>>"$_OUT"
+}
+trap open_log USR1
+
+# On SIGQUIT or SIGPIPE exit
+_EXIT=0
+do_exit() {
+	_EXIT=1
+}
+trap do_exit QUIT
+trap do_exit PIPE
+
+# Setup log output
+open_log
+
+# Read lines, sleeping for 250ms on read timeout of 5s
+while [ $_EXIT -eq 0 ]; do
+	read -rt 5 _LINE
+	RC=$?
+	if [ $RC -eq 0 ]; then # Received a line
+		echo $_LINE
+	elif [ $RC -eq 142 ]; then # Timeout
+		usleep 250000
+	else # We return on EOF
+		break
+	fi
+done
