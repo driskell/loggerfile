@@ -8,8 +8,8 @@ Usage
 
 `loggerfile <filename> [<signal>]`
 
-If signal is unspecified, loggerfile will start a new instance and log STDIN to the specified file.
-If a signal is specified, loggerfile will locate the process currently logging to the specified file and request it to perform the specified action.
+If signal is unspecified, loggerfile will start a new instance and append stdin to the specified file.
+If a signal is specified, loggerfile will locate the loggerfile currently logging to the specified file and request it to perform the specified action.
 
 ### Available signal actions:
 

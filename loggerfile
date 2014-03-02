@@ -9,8 +9,8 @@ _ME=$( basename $0 )
 	echo
 	echo "Usage: ${_ME} <filename> [<signal>]"
 	echo
-	echo "If signal is unspecified, ${_ME} will start a new instance and log STDIN to the specified file."
-	echo "If a signal is specified, ${_ME} will locate the process currently logging to the specified file"
+	echo "If signal is unspecified, ${_ME} will start a new instance and append stdin to the specified file."
+	echo "If a signal is specified, ${_ME} will locate the ${_ME} currently logging to the specified file"
 	echo "and request it to perform the specified action."
 	echo
 	echo "Available signal actions:"
