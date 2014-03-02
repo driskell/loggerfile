@@ -3,6 +3,8 @@ loggerfile
 
 Helper utility to provide reopen_logs functionality to anything that logs to stdout.
 
+Loggerfile is intended as a replacement for `logger` in instances where you need to direct logs straight into their own file and rotate them separately. This avoids the modification of the syslog configuration with potentially complex filters, and even nightly truncation of logs potentially causing lost data and `tail -f` truncation detection complaints. You heard me right, **truncation**. Don't do it. Just... don't.
+
 Usage
 -----
 
@@ -28,3 +30,5 @@ Waits for the instance to stop gracefully. Useful in init script restarts where 
 #### waitkill
 
 Performs the wait action for 30 seconds and then, if the instance is still running, kills it.
+
+
