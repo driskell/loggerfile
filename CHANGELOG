@@ -1,2 +1,8 @@
+0.2 - Sun Mar 9 2014
+Bash version:
+- Fix for RHEL5 where read -t returns 1 on timeout instead of 142
+Python verison:
+  No changes
+
 0.1 - Sun Mar 2 2014
-* Initial release
+- Initial release
