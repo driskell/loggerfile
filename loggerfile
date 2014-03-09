@@ -130,14 +130,12 @@ trap do_exit PIPE
 # Setup log output
 open_log
 
-# Read lines, sleeping for 250ms on read timeout of 5s
+# Read lines
 while [ $_EXIT -eq 0 ]; do
-	read -rt 5 _LINE
+	read -r _LINE
 	RC=$?
-	if [ $RC -eq 0 ]; then # Received a line
+	if [ "$_LINE" != "" ] || [ $RC -eq 0 ]; then # Received a line
 		echo $_LINE
-	elif [ $RC -eq 142 ]; then # Timeout
-		usleep 250000
 	else # We return on EOF
 		break
 	fi
