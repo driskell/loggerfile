@@ -13,7 +13,7 @@ class AlarmSignal( Exception ):
 	def __str__( self ):
 		return repr( self.value )
 
-version = "0.2"
+version = "0.3"
 me = os.path.basename( __file__ )
 
 # Check we have specified enough parameters
@@ -104,7 +104,8 @@ if len( sys.argv ) > 2:
 		sys.exit(0)
 
 # We need to lock the PID file to prevent double running to the same file
-pf = open( out + '.pid', 'r+' )
+pf = open( out + '.pid', 'a+' )
+pf.seek(0)
 try:
 	fcntl.flock( pf.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB )
 except IOError:

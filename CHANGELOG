@@ -1,7 +1,13 @@
+0.3 - Mon Apr 14 2014
+Bash version:
+  No changes
+Python version:
+- Fix error on first startup due to failure to create pid file
+
 0.2 - Sun Mar 9 2014
 Bash version:
 - Fix for RHEL5 where read -t returns 1 on timeout instead of 142
-Python verison:
+Python version:
   No changes
 
 0.1 - Sun Mar 2 2014
