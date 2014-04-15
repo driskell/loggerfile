@@ -135,7 +135,7 @@ while [ $_EXIT -eq 0 ]; do
 	read -r _LINE
 	RC=$?
 	if [ "$_LINE" != "" ] || [ $RC -eq 0 ]; then # Received a line
-		echo $_LINE
+		echo "$_LINE"
 	else # We return on EOF
 		break
 	fi

@@ -1,3 +1,9 @@
+0.4 - Tue Apr 15 2014
+Bash version:
+- Prevent file glob expansion of the lines
+Python version:
+  No changes
+
 0.3 - Mon Apr 14 2014
 Bash version:
   No changes
